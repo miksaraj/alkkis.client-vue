@@ -16,12 +16,13 @@
 </template>
 
 <script lang="ts">
+import { Product } from "@/domain/product.type"
 export default {
   name : "ProductSearch",
   data : () => {
     return {
-      products: [],
-      selected: []
+      products: [] as Product[],
+      selected: [] as Product[]
     }
   }
 }

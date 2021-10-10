@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts">
+import { Gender, Drinker } from "@/domain/drinker.type"
 export default {
   name : "BacParams"
 }
