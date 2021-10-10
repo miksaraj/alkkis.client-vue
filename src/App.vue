@@ -50,7 +50,7 @@ export default defineComponent({
         drinker: drinker
       }
 
-      let bac = await fetch(`/api/bac`, {
+      let bac = await fetch(`http://localhost:3000/api/bac`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {

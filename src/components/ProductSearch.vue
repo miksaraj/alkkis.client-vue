@@ -32,7 +32,7 @@ export default defineComponent({
     let searchText = ''
 
     async function search() {
-      products = await fetch(`/api/search?name=${searchText}`)
+      products = await fetch(`http://localhost:3000/api/search?name=${searchText}`)
       .then(res => res.json())
     }
 
