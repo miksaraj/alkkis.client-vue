@@ -1,9 +1,10 @@
 <template>
   <div class="container">
     <div>
+      <Logo />
       <BacParams @drinkerUpdated="updateDrinkerParams" />
       <ProductSearch @productListUpdated="updateProductList" />
-      <button @click="calculateBAC">Laske</button>
+      <button class="green" @click="calculateBAC">Laske</button>
       <p v-if="result">{{ result }}</p>
     </div>
   </div>
@@ -12,21 +13,28 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { Product } from "@/domain/product.type"
-import { Drinker } from "@/domain/drinker.type"
+import { Drinker, Gender } from "@/domain/drinker.type"
 import { BacData } from "@/domain/bac-data.type"
-import ProductSearch from "@/components/ProductSearch.vue";
-import BacParams from "@/components/BacParams.vue";
+import ProductSearch from "@/components/ProductSearch.vue"
+import BacParams from "@/components/BacParams.vue"
+import Logo from "@/components/Logo.vue"
+import "@/assets/styles/main.css"
 
 export default defineComponent({
   name: 'App',
   components: {
     BacParams,
-    ProductSearch
+    ProductSearch,
+    Logo
   },
   setup() {
     let products: Product[] = []
-    let drinker: Drinker
-    let result: ?string
+    let drinker: Drinker = {
+      gender: Gender.Male,
+      weight: 80,
+      time: 1
+    }
+    let result = ''
 
     function updateProductList(list: Product[]) {
       products = list
