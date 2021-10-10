@@ -9,7 +9,10 @@
 // /* eslint-disable import/no-extraneous-dependencies, global-require */
 // const webpack = require('@cypress/webpack-preprocessor')
 
+import cucumber from "cypress-cucumber-preprocessor";
+
 module.exports = (on, config) => {
+  on('file:preprocessor', cucumber.default())
   // on('file:preprocessor', webpack({
   //  webpackOptions: require('@vue/cli-service/webpack.config'),
   //  watchOptions: {}
