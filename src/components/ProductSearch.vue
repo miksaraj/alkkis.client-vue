@@ -1,6 +1,9 @@
 <template>
   <div>
     <h1>Tuotehaku</h1>
+    <label for="search-text">Hakusana</label>
+    <input type="text" id="search-text" v-model="searchText">
+    <button @click="search">Hae</button>
     <div v-if="products.length > 0">
       <ul v-for="product in products" :key="product.num">
         <li>
@@ -17,13 +20,38 @@
 
 <script lang="ts">
 import { Product } from "@/domain/product.type"
-export default {
+import { defineComponent } from "vue"
+export default defineComponent({
   name : "ProductSearch",
-  data : () => {
+  emits : ['productListUpdated'],
+  setup() {
+    let products: Product[]
+    let selected: Product[]
+    let searchText: string
+
+    async function search() {
+      products = await fetch(`/api/search?name=${searchText}`)
+      .then(res => res.json())
+    }
+
+    function updateSelected(product: Product) {
+      if (selected.includes(product)) selected.splice(selected.indexOf(product), 1)
+      else selected.push(product)
+      this.$emit('productListUpdated', selected)
+    }
+
+    function getAlkoLink(productNumber: number): string {
+      return `https://www.alko.fi/tuotteet/${productNumber}/`
+    }
+
     return {
-      products: [] as Product[],
-      selected: [] as Product[]
+      products,
+      selected,
+      searchText,
+      search,
+      updateSelected,
+      getAlkoLink
     }
   }
-}
+})
 </script>
