@@ -2,8 +2,41 @@
   <div class="container">
     <div>
       <Logo />
-      <BacParams @drinkerUpdated="updateDrinkerParams" />
-      <ProductSearch @productListUpdated="updateProductList" />
+      <section>
+        <div class="box">
+          <h1 class="subtitle">Juomarin parametrit</h1>
+          <label class="inline" for="gender">Sukupuoli:</label>
+          <select class="inline" id="gender" v-model="drinker.gender">
+            <option disabled :value="undefined">Valitse...</option>
+            <option :value="Gender.Female">Nainen</option>
+            <option :value="Gender.Male">Mies</option>
+          </select>
+          <br>
+          <label for="weight">Paino (kg):</label>
+          <input class="stacked" type="number" id="weight" v-model.number="drinker.weight">
+          <label for="time">Juoma-aika tunneissa:</label>
+          <input class="stacked" type="number" id="time" v-model.number="drinker.time">
+        </div>
+      </section>
+      <section>
+        <div class="box">
+          <h1 class="subtitle">Tuotehaku</h1>
+          <label class="inline" for="search-text">Hakusana</label>
+          <input class="inline" type="text" id="search-text" v-model="searchText">
+          <button class="grey" @click="search">Hae</button>
+          <div v-if="products.length > 0">
+            <ul v-for="product in products" :key="product.num">
+              <li>
+                <a :href="getAlkoLink(product.num)" target="_blank" rel="noopener noreferrer">
+                  {{ product.name }}
+                </a>
+                {{ product.alkopros }} - {{ product.price }}
+                <input type="checkbox" :checked="selected.includes(product)" @change="updateSelected(product)">
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
       <button class="green" @click="calculateBAC">Laske</button>
       <p v-if="result">{{ result }}</p>
     </div>
@@ -15,33 +48,37 @@ import { defineComponent } from 'vue'
 import { Product } from "@/domain/product.type"
 import { Drinker, Gender } from "@/domain/drinker.type"
 import { BacData } from "@/domain/bac-data.type"
-import ProductSearch from "@/components/ProductSearch.vue"
-import BacParams from "@/components/BacParams.vue"
 import Logo from "@/components/Logo.vue"
 import "@/assets/styles/main.css"
 
 export default defineComponent({
   name: 'App',
   components: {
-    BacParams,
-    ProductSearch,
     Logo
   },
   setup() {
     let products: Product[] = []
+    let selected: Product[] = []
     let drinker: Drinker = {
       gender: Gender.Male,
       weight: 80,
       time: 1
     }
     let result = ''
+    let searchText = ''
 
-    function updateProductList(list: Product[]) {
-      products = list
+    async function search() {
+      products = await fetch(`http://localhost:3000/api/search?name=${searchText}`)
+      .then(res => res.json())
     }
 
-    function updateDrinkerParams(data: Drinker) {
-      drinker = data
+    function updateSelected(product: Product) {
+      if (selected.includes(product)) selected.splice(selected.indexOf(product), 1)
+      else selected.push(product)
+    }
+
+    function getAlkoLink(productNumber: number): string {
+      return `https://www.alko.fi/tuotteet/${productNumber}/`
     }
 
     async function calculateBAC() {
@@ -63,10 +100,16 @@ export default defineComponent({
     }
 
     return {
-      updateDrinkerParams,
-      updateProductList,
       calculateBAC,
-      result
+      result,
+      searchText,
+      search,
+      updateSelected,
+      getAlkoLink,
+      products,
+      selected,
+      drinker,
+      Gender
     }
   }
 })

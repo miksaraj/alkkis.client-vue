@@ -1,4 +1,4 @@
-.block input, input.inline {
+input.inline {
   margin: 5px 10px 5px 0;
   padding: 10px;
   border: 1px solid #ddd;
@@ -70,16 +70,6 @@ label.inline {
   margin: 5px 10px 5px 0;
 }
 
-.block {
-  margin-bottom: 1.5rem;
-}
-.block label {
-  margin: 5px 10px 5px 0;
-}
-.block input {
-  vertical-align: middle;
-}
-
 .box {
   border-style: dashed;
   border-radius: 1rem;
@@ -109,6 +99,10 @@ button.grey {
 
 button:hover {
   color: black;
+}
+
+select.inline {
+  margin-bottom: 1.5rem;
 }
 
 /*# sourceMappingURL=main.css.map */
