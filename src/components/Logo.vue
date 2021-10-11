@@ -1,5 +1,5 @@
 <template>
-  <img class="logo" src="../assets/logo_alkit.png">
+  <img class="logo" src="../assets/logo_alkit.png" alt="Alkoholistit asialla">
 </template>
 
 <script lang="ts">
