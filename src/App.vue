@@ -67,6 +67,15 @@ export default defineComponent({
     let result = ''
     let searchText = ''
 
+    /**
+     * Note: the url differs between backend implementations:
+     * NestJS implementation: localhost:3000/v1/alko/search?...
+     * Ts.ED implementation: localhost:8083/v1/alko/search?...
+     * FoalTS implementation not functional as of yet
+     *
+     * They will be standardised once I get to it, but for
+     * now the callable url depends on used backend version.
+     */
     async function search() {
       products = await fetch(`http://localhost:3000/api/search?name=${searchText}`)
       .then(res => res.json())
@@ -87,6 +96,15 @@ export default defineComponent({
         drinker: drinker
       }
 
+      /**
+       * Note: the url differs between backend implementations:
+       * NestJS implementation: localhost:3000/v1/bac/
+       * Ts.ED implementation: localhost:8083/v1/bac/
+       * FoalTS implementation: localhost:3001/bac/
+       *
+       * They will be standardised once I get to it, but for
+       * now the callable url depends on used backend version.
+       */
       let bac = await fetch(`http://localhost:3000/api/bac`, {
         method: 'POST',
         body: JSON.stringify(data),
