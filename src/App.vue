@@ -31,7 +31,7 @@
                   {{ product.name }}
                 </a>
                 {{ product.alkopros }} - {{ product.price }}
-                <input type="checkbox" :checked="selected.includes(product)" @change="updateSelected(product)">
+                <input type="checkbox" :value="product" v-model="selected">
               </li>
             </ul>
           </div>
@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { Product } from "@/domain/product.type"
 import { Drinker, Gender } from "@/domain/drinker.type"
 import { BacData } from "@/domain/bac-data.type"
@@ -57,35 +57,19 @@ export default defineComponent({
     Logo
   },
   setup() {
-    let products: Product[] = []
-    let selected: Product[] = []
-    let drinker: Drinker = {
+    let products = ref<Product[]>([])
+    let selected = ref<Product[]>([])
+    let drinker = ref({
       gender: Gender.Male,
       weight: 80,
       time: 1
-    }
-    let result = ''
-    let searchText = ''
+    } as Drinker)
+    let result = ref('')
+    let searchText = ref('')
 
-    /**
-     * Note: the url differs between backend implementations:
-     * NestJS implementation: localhost:3000/v1/alko/search?...
-     * Ts.ED implementation: localhost:8083/v1/alko/search?...
-     * FoalTS implementation not functional as of yet
-     *
-     * They will be standardised once I get to it, but for
-     * now the callable url depends on used backend version.
-     *
-     * Target standardised endpoint: localhost:3000/api/v1/search?...
-     */
     async function search() {
-      products = await fetch(`http://localhost:3000/api/v1/search?name=${searchText}`)
+      products.value = await fetch(`http://localhost:3000/api/v1/search?name=${searchText.value}`)
       .then(res => res.json())
-    }
-
-    function updateSelected(product: Product) {
-      if (selected.includes(product)) selected.splice(selected.indexOf(product), 1)
-      else selected.push(product)
     }
 
     function getAlkoLink(productNumber: number): string {
@@ -94,22 +78,11 @@ export default defineComponent({
 
     async function calculateBAC() {
       const data: BacData = {
-        products: products,
-        drinker: drinker
+        products: selected.value,
+        drinker: drinker.value
       }
 
-      /**
-       * Note: the url differs between backend implementations:
-       * NestJS implementation: localhost:3000/v1/bac/
-       * Ts.ED implementation: localhost:8083/v1/bac/
-       * FoalTS implementation: localhost:3001/bac/
-       *
-       * They will be standardised once I get to it, but for
-       * now the callable url depends on used backend version.
-       *
-       * Target standardised endpoint: localhost:3000/api/v1/bac/
-       */
-      let bac = await fetch(`http://localhost:3000/api/v1/bac`, {
+      const representation = await fetch(`http://localhost:3000/api/v1/bac`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
@@ -118,7 +91,7 @@ export default defineComponent({
         }
       })
       .then(res => res.json())
-      console.log(bac)
+      result.value = representation.text
     }
 
     return {
@@ -126,7 +99,6 @@ export default defineComponent({
       result,
       searchText,
       search,
-      updateSelected,
       getAlkoLink,
       products,
       selected,
