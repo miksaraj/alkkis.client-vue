@@ -75,9 +75,11 @@ export default defineComponent({
      *
      * They will be standardised once I get to it, but for
      * now the callable url depends on used backend version.
+     *
+     * Target standardised endpoint: localhost:3000/api/v1/search?...
      */
     async function search() {
-      products = await fetch(`http://localhost:3000/api/search?name=${searchText}`)
+      products = await fetch(`http://localhost:3000/api/v1/search?name=${searchText}`)
       .then(res => res.json())
     }
 
@@ -104,8 +106,10 @@ export default defineComponent({
        *
        * They will be standardised once I get to it, but for
        * now the callable url depends on used backend version.
+       *
+       * Target standardised endpoint: localhost:3000/api/v1/bac/
        */
-      let bac = await fetch(`http://localhost:3000/api/bac`, {
+      let bac = await fetch(`http://localhost:3000/api/v1/bac`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
