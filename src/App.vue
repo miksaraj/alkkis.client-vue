@@ -30,7 +30,7 @@
                 <a :href="getAlkoLink(product.num)" target="_blank" rel="noopener noreferrer">
                   {{ product.name }}
                 </a>
-                {{ product.alkopros }} - {{ product.price }}
+                {{ product.alcoholPercentage }} - {{ product.price }}
                 <input type="checkbox" :value="product" v-model="selected">
               </li>
             </ul>
@@ -45,9 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { Product } from "@/domain/product.type"
-import { Drinker, Gender } from "@/domain/drinker.type"
-import { BacData } from "@/domain/bac-data.type"
+import { Product, Drinker, Gender, BacRequestDto, BacRepresentation } from '@/alkkis'
 import Logo from "@/components/Logo.vue"
 import "@/assets/styles/main.css"
 
@@ -72,17 +70,18 @@ export default defineComponent({
       .then(res => res.json())
     }
 
+    // TODO: remove after repopulating database with entries containing link data
     function getAlkoLink(productNumber: number): string {
       return `https://www.alko.fi/tuotteet/${productNumber}/`
     }
 
     async function calculateBAC() {
-      const data: BacData = {
+      const data: BacRequestDto = {
         products: selected.value,
         drinker: drinker.value
       }
 
-      const representation = await fetch(`http://localhost:3000/api/v1/bac`, {
+      const representation: BacRepresentation = await fetch(`http://localhost:3000/api/v1/bac`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
