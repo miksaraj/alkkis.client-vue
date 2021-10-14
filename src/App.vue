@@ -27,7 +27,7 @@
           <div v-if="products.length > 0">
             <ul v-for="product in products" :key="product.num">
               <li>
-                <a :href="getAlkoLink(product.num)" target="_blank" rel="noopener noreferrer">
+                <a :href="product.alkoLink" target="_blank" rel="noopener noreferrer">
                   {{ product.name }}
                 </a>
                 {{ product.alcoholPercentage }} - {{ product.price }}
@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { Product, Drinker, Gender, BacRequestDto, BacRepresentation } from '@/alkkis'
+import { Product, Drinker, Gender, BacRequestDto, BacRepresentation } from '@/alkkis.types'
 import Logo from "@/components/Logo.vue"
 import "@/assets/styles/main.css"
 
@@ -68,11 +68,6 @@ export default defineComponent({
     async function search() {
       products.value = await fetch(`http://localhost:3000/api/v1/search?name=${searchText.value}`)
       .then(res => res.json())
-    }
-
-    // TODO: remove after repopulating database with entries containing link data
-    function getAlkoLink(productNumber: number): string {
-      return `https://www.alko.fi/tuotteet/${productNumber}/`
     }
 
     async function calculateBAC() {
@@ -98,7 +93,6 @@ export default defineComponent({
       result,
       searchText,
       search,
-      getAlkoLink,
       products,
       selected,
       drinker,
